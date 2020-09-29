@@ -1,6 +1,6 @@
 package com.treknuts.glucoseapi.models;
 
-import org.hibernate.type.TimestampType;
+import org.hibernate.type.LocalDateTimeType;
 
 import javax.persistence.*;
 
@@ -11,12 +11,12 @@ public class Entry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "entry_id")
-    private Integer entry_id;
+    private Long entry_id;
 
     private int value;
     private int bolus;
     private int correction;
-    private TimestampType created;
+    private LocalDateTimeType created;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -24,11 +24,11 @@ public class Entry {
 
     public Entry() {}
 
-    public Integer getEntry_id() {
+    public Long getEntry_id() {
         return entry_id;
     }
 
-    public void setEntry_id(Integer entry_id) {
+    public void setEntry_id(Long entry_id) {
         this.entry_id = entry_id;
     }
 
@@ -56,11 +56,11 @@ public class Entry {
         this.correction = correction;
     }
 
-    public TimestampType getCreated() {
+    public LocalDateTimeType getCreated() {
         return created;
     }
 
-    public void setCreated(TimestampType created) {
+    public void setCreated(LocalDateTimeType created) {
         this.created = created;
     }
 

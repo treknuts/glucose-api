@@ -1,49 +1,46 @@
 package com.treknuts.glucoseapi.models;
 
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "users")
-public class User {
+@Entity(name = "users")
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
-    private Integer user_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long user_id;
 
     private String username;
     private String email;
     private String password;
-    private String role;
+
+    @Builder.Default
+    private Role role = Role.USER;
+
+    @Builder.Default
+    private Boolean locked = false;
+
+    @Builder.Default
+    private Boolean enabled = false;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.toString());
+        return Collections.singleton(simpleGrantedAuthority);
+    }
 
     @OneToMany(mappedBy = "user")
-    private Set<Entry> entries;
+    private Set<Entry> entries = new HashSet<Entry>();
 
-    public Integer getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
@@ -52,19 +49,45 @@ public class User {
         this.password = password;
     }
 
-    public Set<Entry> getEntries() {
-        return entries;
+    @Override
+    public String getUsername() {
+        return email;
     }
 
-    public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getRole() {
-        return role;
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
+
